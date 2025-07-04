@@ -22,7 +22,9 @@
 
     /* JS support */
     "allowJs": true,
-    "checkJs": false
+    "checkJs": false,
+
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src"]
 }
