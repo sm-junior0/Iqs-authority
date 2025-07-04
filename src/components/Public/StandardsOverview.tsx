@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import standard from '../../assets/images/standardOverview.png'
 import standardoverviewresponsive from '../../assets/images/standardOverviewResponsive.png'
 
 const StandardsOverview: React.FC = () => {
+
   return (
     <section id="standard" className="w-full bg-transparent py-8 md:py-20">
       <div className="max-w-5xl mx-auto px-2 md:px-4 relative">
@@ -26,7 +27,8 @@ const StandardsOverview: React.FC = () => {
           />  
         </div>
         <a
-          href="#"
+          href="/iqs-standard.pdf"
+          download
           className="inline-flex items-center gap-2 bg-[#002855] hover:bg-[#001a3d] text-white font-medium rounded-full px-8 py-3 text-base shadow-lg transition-all duration-200"
         >
           Read the full IQS Standard Document <ArrowRight size={18} />

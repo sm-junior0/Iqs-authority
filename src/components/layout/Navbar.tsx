@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, X, Globe, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface MenuItem {
   label: string;
@@ -76,12 +77,13 @@ const Navbar: React.FC = () => {
   Apply for Accreditation
 </a>
 
-          <button
-            className="border border-white text-white font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm bg-transparent hover:bg-white hover:text-[#002855]"
+          <Link
+            to="/auth/login"
+            className="border border-white text-white font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm bg-transparent hover:bg-white hover:text-[#002855] flex items-center justify-center text-center"
             style={{ width: '100px', height: '40px' }}
           >
             Login
-          </button>
+          </Link>
           {/* Language Switcher */}
           <button
             onClick={toggleLanguage}
@@ -131,12 +133,13 @@ const Navbar: React.FC = () => {
               <a href="/auth/register" className="bg-white text-[#002855] font-medium rounded-full transition-all duration-200 px-6 text-sm border-none focus:outline-none flex items-center justify-center h-full" style={{ width: '180px' }}>
                 Apply for Accredetion
               </a>
-              <button
-                className="border border-white text-white font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm bg-transparent hover:bg-white hover:text-[#002855]"
+              <Link
+                to="/auth/login"
+                className="border border-white text-white font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm bg-transparent hover:bg-white hover:text-[#002855] flex items-center justify-center text-center"
                 style={{ width: '100px', height: '40px' }}
               >
                 Login
-              </button>
+              </Link>
             </div>
           </div>
         </div>
