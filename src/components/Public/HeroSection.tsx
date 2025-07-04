@@ -1,6 +1,6 @@
 import React from 'react';
 import { Play } from 'lucide-react';
-import Button from '../ui/Button';
+
 
 const HeroSection = () => {
   return (

@@ -106,8 +106,8 @@ const Footer: React.FC = () => {
               </p>
               
               <div className="flex flex-col space-y-4">
-                <Button variant="secondary" className="w-full max-w-xs mx-auto" onClick={() => {}}>
-                  Register Now
+                <Button variant="secondary" className="w-full max-w-xs mx-auto" asChild onClick={() => {}}>
+                  <a href="/auth/register">Register Now</a>
                 </Button>
               </div>
             </div>

@@ -57,8 +57,8 @@ const QuickActions = () => {
                 {action.description}
               </p>
               
-              <Button variant={action.buttonVariant} className="w-full">
-                {action.buttonText}
+              <Button variant={action.buttonVariant} className="w-full" asChild>
+                <a href="/auth/register">{action.buttonText}</a>
               </Button>
             </div>
           ))}

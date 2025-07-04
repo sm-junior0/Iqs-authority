@@ -68,12 +68,14 @@ const Navbar: React.FC = () => {
         {/* Right Side Actions */}
         <div className="hidden xl:flex items-center space-x-3">
           {/* Action Buttons */}
-          <button
-            className="bg-white text-[#002855] font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm border-none focus:outline-none"
-            style={{ width: '180px', height: '40px' }}
-          >
-            Apply for Accredetion
-          </button>
+          <a
+  href="/auth/register"
+  className="bg-white text-[#002855] font-medium rounded-full transition-all duration-200 px-6 text-sm border-none focus:outline-none flex items-center justify-center text-center h-12"
+  style={{ width: '180px' }}
+>
+  Apply for Accreditation
+</a>
+
           <button
             className="border border-white text-white font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm bg-transparent hover:bg-white hover:text-[#002855]"
             style={{ width: '100px', height: '40px' }}
@@ -126,12 +128,9 @@ const Navbar: React.FC = () => {
                 <span>{language}</span>
                 <ChevronDown size={16} className="ml-1" />
               </button>
-              <button
-                className="bg-white text-[#002855] font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm border-none focus:outline-none"
-                style={{ width: '180px', height: '40px' }}
-              >
+              <a href="/auth/register" className="bg-white text-[#002855] font-medium rounded-full transition-all duration-200 px-6 text-sm border-none focus:outline-none flex items-center justify-center h-full" style={{ width: '180px' }}>
                 Apply for Accredetion
-              </button>
+              </a>
               <button
                 className="border border-white text-white font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm bg-transparent hover:bg-white hover:text-[#002855]"
                 style={{ width: '100px', height: '40px' }}

@@ -61,19 +61,9 @@ const StatsSection = () => {
         </div>
         
         <div className="text-center mt-16">
-          <button 
-            className="bg-[#002855] hover:bg-[#001a3d] text-white font-medium rounded-full transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            style={{
-              paddingTop: '12px',
-              paddingRight: '40px',
-              paddingBottom: '12px',
-              paddingLeft: '40px',
-              fontSize: '16px',
-              height: '50px'
-            }}
-          >
+          <a href="/auth/register" className="bg-[#002855] hover:bg-[#001a3d] text-white font-medium rounded-full transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl inline-block" style={{ paddingTop: '12px', paddingRight: '40px', paddingBottom: '12px', paddingLeft: '40px', fontSize: '16px', height: '50px' }}>
             Apply for Accreditation →
-          </button>
+          </a>
         </div>
       </div>
     </section>
