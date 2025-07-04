@@ -1,29 +1,60 @@
 import React from 'react';
 import { FileText, School, MessageCircle } from 'lucide-react';
 import Button from '../ui/Button';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const QuickActions = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Helper to scroll to section after navigation
+  const scrollToSection = (sectionId: string) => {
+    if (location.pathname === '/') {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      navigate('/');
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  };
+
   const actions = [
     {
       icon: <FileText size={48} />,
       title: 'Apply For Accreditation',
       description: 'Start now and enable your school to access our programs.',
       buttonText: 'Apply Now',
-      buttonVariant: 'primary'
+      buttonVariant: 'primary',
+      onClick: () => navigate('/auth/register'),
+      link: undefined,
+      as: 'button'
     },
     {
       icon: <School size={48} />,
       title: 'View Certified Schools',
       description: 'See the List of all schools that we are working together on our system.',
       buttonText: 'View Schools',
-      buttonVariant: 'primary'
+      buttonVariant: 'primary',
+      onClick: () => scrollToSection('schools'),
+      link: undefined,
+      as: 'button'
     },
     {
       icon: <MessageCircle size={48} />,
       title: 'Contact Us',
       description: 'Get in contact with us and our team behind this system.',
       buttonText: 'Contact Us',
-      buttonVariant: 'primary'
+      buttonVariant: 'primary',
+      onClick: () => scrollToSection('contact'),
+      link: undefined,
+      as: 'button'
     }
   ];
 
@@ -48,18 +79,21 @@ const QuickActions = () => {
               <div className="text-[#1B365D] mb-6 group-hover:text-[#2563EB] transition-colors duration-300">
                 {action.icon}
               </div>
-              
               <h3 className="text-xl font-bold text-gray-900 mb-4">
                 {action.title}
               </h3>
-              
               <p className="text-gray-600 mb-6 leading-relaxed">
                 {action.description}
               </p>
-              
-              <Button variant={action.buttonVariant} className="w-full" asChild>
-                <a href="/auth/register">{action.buttonText}</a>
-              </Button>
+              {action.buttonText === 'Apply Now' || action.buttonText === 'View Schools' || action.buttonText === 'Contact Us' ? (
+                <Button variant={action.buttonVariant} className="w-full" onClick={action.onClick}>
+                  {action.buttonText}
+                </Button>
+              ) : (
+                <Button variant={action.buttonVariant} className="w-full" onClick={() => {}}>
+                  {action.buttonText}
+                </Button>
+              )}
             </div>
           ))}
         </div>
