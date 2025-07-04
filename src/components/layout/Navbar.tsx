@@ -69,13 +69,13 @@ const Navbar: React.FC = () => {
         {/* Right Side Actions */}
         <div className="hidden xl:flex items-center space-x-3">
           {/* Action Buttons */}
-          <a
-  href="/auth/register"
-  className="bg-white text-[#002855] font-medium rounded-full transition-all duration-200 px-6 text-sm border-none focus:outline-none flex items-center justify-center text-center h-12"
-  style={{ width: '180px' }}
->
-  Apply for Accreditation
-</a>
+          <Link
+            to="/auth/register"
+            className="bg-white text-[#002855] font-medium rounded-full transition-all duration-200 px-6 text-sm border-none focus:outline-none flex items-center justify-center text-center h-12"
+            style={{ width: '180px' }}
+          >
+            Apply for Accreditation
+          </Link>
 
           <Link
             to="/auth/login"
@@ -130,9 +130,13 @@ const Navbar: React.FC = () => {
                 <span>{language}</span>
                 <ChevronDown size={16} className="ml-1" />
               </button>
-              <a href="/auth/register" className="bg-white text-[#002855] font-medium rounded-full transition-all duration-200 px-6 text-sm border-none focus:outline-none flex items-center justify-center h-full" style={{ width: '180px' }}>
+              <Link
+                to="/auth/register"
+                className="bg-white text-[#002855] font-medium rounded-full transition-all duration-200 px-6 text-sm border-none focus:outline-none flex items-center justify-center h-full"
+                style={{ width: '180px' }}
+              >
                 Apply for Accredetion
-              </a>
+              </Link>
               <Link
                 to="/auth/login"
                 className="border border-white text-white font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm bg-transparent hover:bg-white hover:text-[#002855] flex items-center justify-center text-center"

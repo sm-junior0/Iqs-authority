@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import standard from '../../assets/images/standardOverview.png'
 import standardoverviewresponsive from '../../assets/images/standardOverviewResponsive.png'
