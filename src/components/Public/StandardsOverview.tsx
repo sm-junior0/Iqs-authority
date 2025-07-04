@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import standard from '../../assets/images/standardOverview.png'
+import standardoverviewresponsive from '../../assets/images/standardOverviewResponsive.png'
 
 const StandardsOverview: React.FC = () => {
   return (
@@ -14,10 +15,15 @@ const StandardsOverview: React.FC = () => {
         </p>
         <div className="relative min-h-[180px] md:min-h-[240px] mb-10 md:mb-16 flex justify-start">
           <img 
-            src={standard} 
-            alt="" 
-            className="p-2 md:p-8 rounded-2xl shadow transition-transform duration-300 hover:scale-105 max-w-full h-auto" 
+            src={standardoverviewresponsive} 
+            alt="IQS Standard Overview Responsive" 
+            className="block md:hidden p-2 rounded-2xl shadow transition-transform duration-300 hover:scale-105 max-w-full h-auto" 
           />
+          <img 
+            src={standard} 
+            alt="IQS Standard Overview" 
+            className="hidden md:block p-2 md:p-8 rounded-2xl shadow transition-transform duration-300 hover:scale-105 max-w-full h-auto" 
+          />  
         </div>
         <a
           href="#"

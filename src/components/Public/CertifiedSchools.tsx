@@ -1,15 +1,18 @@
 import React from 'react';
+import amara from '../../assets/logos/amara.png'
+import kanba from '../../assets/logos/kanba.png'
+import liva from '../../assets/logos/liva.png'
 
 const CertifiedSchools = () => {
   const schools = [
-    { name: 'liwa', logo: 'https://via.placeholder.com/120x60/1B365D/FFFFFF?text=liwa' },
-    { name: 'kanba', logo: 'https://via.placeholder.com/120x60/2563EB/FFFFFF?text=kanba' },
-    { name: 'amara', logo: 'https://via.placeholder.com/120x60/10B981/FFFFFF?text=amara' },
-    { name: 'amara', logo: 'https://via.placeholder.com/120x60/F59E0B/FFFFFF?text=amara' },
-    { name: 'amara', logo: 'https://via.placeholder.com/120x60/EF4444/FFFFFF?text=amara' },
-    { name: 'amara', logo: 'https://via.placeholder.com/120x60/8B5CF6/FFFFFF?text=amara' },
-    { name: 'amara', logo: 'https://via.placeholder.com/120x60/EC4899/FFFFFF?text=amara' },
-    { name: 'amara', logo: 'https://via.placeholder.com/120x60/06B6D4/FFFFFF?text=amara' },
+    { name: 'liwa', logo: liva },
+    { name: 'kanba', logo: kanba },
+    { name: 'amara', logo: amara },
+    { name: 'amara', logo: amara },
+    { name: 'amara', logo: amara },
+    { name: 'amara', logo: amara },
+    { name: 'amara', logo: amara },
+    { name: 'amara', logo: amara },
   ];
 
   return (
