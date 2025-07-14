@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 
-interface LoginFormData {
-  email: string;
-  password: string;
+interface ResetPasswordFormData {
+  newPassword: string;
+  confirmPassword: string;
 }
 
-const Login: React.FC = () => {
-  const [formData, setFormData] = useState<LoginFormData>({
-    email: '',
-    password: ''
+const ResetPassword: React.FC = () => {
+  const [formData, setFormData] = useState<ResetPasswordFormData>({
+    newPassword: '',
+    confirmPassword: ''
   });
-  const [errors, setErrors] = useState<Partial<LoginFormData>>({});
+  const [errors, setErrors] = useState<Partial<ResetPasswordFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   
-  const { login } = useAuth();
+  const { resetPassword } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { code, email } = location.state || {};
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -28,7 +30,7 @@ const Login: React.FC = () => {
     }));
     
     // Clear error when user starts typing
-    if (errors[name as keyof LoginFormData]) {
+    if (errors[name as keyof ResetPasswordFormData]) {
       setErrors(prev => ({
         ...prev,
         [name]: undefined
@@ -37,16 +39,18 @@ const Login: React.FC = () => {
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<LoginFormData> = {};
+    const newErrors: Partial<ResetPasswordFormData> = {};
 
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+    if (!formData.newPassword) {
+      newErrors.newPassword = 'New password is required';
+    } else if (formData.newPassword.length < 8) {
+      newErrors.newPassword = 'Password must be at least 8 characters';
     }
 
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.newPassword !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     setErrors(newErrors);
@@ -60,10 +64,14 @@ const Login: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      await login(formData.email, formData.password);
-      navigate('/dashboard');
+      await resetPassword(code, formData.newPassword);
+      navigate('/auth/login', { 
+        state: { 
+          message: 'Password reset successful. Please sign in with your new password.' 
+        } 
+      });
     } catch (error) {
-      setErrors({ email: 'Invalid email or password' });
+      setErrors({ newPassword: 'Failed to reset password. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -74,76 +82,56 @@ const Login: React.FC = () => {
       <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8">
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Sign in to your account
+            Forgot Password
           </h2>
           <p className="text-gray-600">
-            Welcome back! Please enter your details.
+            Enter new password for password resection
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input
-            label="Email address"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            placeholder="Enter your email"
-            error={errors.email}
-            required
-          />
-
-          <Input
-            label="Password"
+            label="New Password"
             type="password"
-            name="password"
-            value={formData.password}
+            name="newPassword"
+            value={formData.newPassword}
             onChange={handleInputChange}
-            placeholder="Enter your password"
-            error={errors.password}
+            placeholder="Enter your new password"
+            error={errors.newPassword}
             showPasswordToggle
             required
           />
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-[#1B365D] focus:ring-[#1B365D] border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                Remember me
-              </label>
-            </div>
-
-            <Link
-              to="/auth/forgot-password"
-              className="text-sm text-[#1B365D] hover:text-[#2563EB] transition-colors duration-200"
-            >
-              Forgot password?
-            </Link>
-          </div>
+          <Input
+            label="Confirm Password"
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            placeholder="Confirm your new password"
+            error={errors.confirmPassword}
+            showPasswordToggle
+            required
+          />
 
           <Button
             type="submit"
             className="w-full"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Signing in...' : 'Sign in'}
+            {isSubmitting ? 'Saving...' : 'Save Password'}
           </Button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">
             Don't have an account?{' '}
-            <Link
-              to="/auth/register"
+            <button
+              onClick={() => navigate('/auth/register')}
               className="text-[#1B365D] hover:text-[#2563EB] font-medium transition-colors duration-200"
             >
               Sign up
-            </Link>
+            </button>
           </p>
         </div>
       </div>
@@ -151,4 +139,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;

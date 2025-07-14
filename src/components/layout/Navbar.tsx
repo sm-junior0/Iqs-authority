@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, X, Globe, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext'; // Language context hook
+import { Link } from "react-router-dom";
 
 interface MenuItem {
   label: string;
@@ -10,22 +11,21 @@ interface MenuItem {
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [language, setLanguage] = useState<string>('EN');
+  const { language, setLanguage, t } = useLanguage();
 
   const menuItems: MenuItem[] = [
-    { label: 'Home', href: '#home', active: true },
-    { label: 'About', href: '#about' },
-    { label: 'IQS Standard', href: '#standard' },
-    { label: 'Accreditation', href: '#accreditation' },
-    { label: 'Certified Schools', href: '#schools' },
-    // { label: 'Training', href: '#training' },
-    { label: 'Media', href: '#media' },
-    { label: 'News', href: '#news' },
-    { label: 'Contact', href: '#contact' },
+    { label: t('nav.home'), href: '#home', active: true },
+    { label: t('nav.about'), href: '#about' },
+    { label: t('nav.iqsStandard'), href: '#standard' },
+    { label: t('nav.accreditation'), href: '#accreditation' },
+    { label: t('nav.certifiedSchools'), href: '#schools' },
+    { label: t('nav.media'), href: '#media' },
+    { label: t('nav.news'), href: '#news' },
+    { label: t('nav.contact'), href: '#contact' },
   ];
 
   const toggleLanguage = (): void => {
-    setLanguage(language === 'EN' ? 'AR' : 'EN');
+    setLanguage(language === 'en' ? 'ar' : 'en');
   };
 
   // Smooth scroll handler
@@ -68,29 +68,28 @@ const Navbar: React.FC = () => {
 
         {/* Right Side Actions */}
         <div className="hidden xl:flex items-center space-x-3">
-          {/* Action Buttons */}
-          <Link
-            to="/auth/register"
+          <a
+            href="/auth/register"
             className="bg-white text-[#002855] font-medium rounded-full transition-all duration-200 px-6 text-sm border-none focus:outline-none flex items-center justify-center text-center h-12"
             style={{ width: '180px' }}
           >
-            Apply for Accreditation
-          </Link>
+            {t('nav.applyAccreditation')}
+          </a>
 
           <Link
             to="/auth/login"
-            className="border border-white text-white font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm bg-transparent hover:bg-white hover:text-[#002855] flex items-center justify-center text-center"
+            className="border border-white text-white font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm bg-transparent hover:bg-white hover:text-[#002855] flex items-center justify-center"
             style={{ width: '100px', height: '40px' }}
           >
-            Login
+            {t('nav.login')}
           </Link>
-          {/* Language Switcher */}
+
           <button
             onClick={toggleLanguage}
             className="flex items-center space-x-1 px-2 py-1 rounded-full text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 bg-transparent"
           >
             <Globe size={16} />
-            <span>{language}</span>
+            <span>{language === 'en' ? 'EN' : 'AR'}</span>
             <ChevronDown size={16} className="ml-1" />
           </button>
         </div>
@@ -105,6 +104,7 @@ const Navbar: React.FC = () => {
           </button>
         </div>
       </div>
+
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="xl:hidden bg-[#002855] rounded-b-lg p-4 shadow-xl border-t border-white/10">
@@ -127,22 +127,22 @@ const Navbar: React.FC = () => {
                 className="flex items-center justify-center space-x-2 px-4 py-3 rounded-lg text-sm font-medium text-white/80 hover:text-white transition-colors duration-200"
               >
                 <Globe size={16} />
-                <span>{language}</span>
+                <span>{language === 'en' ? 'EN' : 'AR'}</span>
                 <ChevronDown size={16} className="ml-1" />
               </button>
-              <Link
-                to="/auth/register"
+              <a
+                href="/auth/register"
                 className="bg-white text-[#002855] font-medium rounded-full transition-all duration-200 px-6 text-sm border-none focus:outline-none flex items-center justify-center h-full"
                 style={{ width: '180px' }}
               >
-                Apply for Accredetion
-              </Link>
+                {t('nav.applyAccreditation')}
+              </a>
               <Link
                 to="/auth/login"
-                className="border border-white text-white font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm bg-transparent hover:bg-white hover:text-[#002855] flex items-center justify-center text-center"
+                className="border border-white text-white font-medium rounded-full transition-all duration-200 px-6 h-9 text-sm bg-transparent hover:bg-white hover:text-[#002855] flex items-center justify-center"
                 style={{ width: '100px', height: '40px' }}
               >
-                Login
+                {t('nav.login')}
               </Link>
             </div>
           </div>

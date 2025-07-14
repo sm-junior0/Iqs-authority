@@ -1,44 +1,55 @@
 import React from 'react';
 import { Calendar, ArrowRight } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
-const NewsStories = () => {
-  const stories = [
+interface Story {
+  id: number;
+  title: string;
+  excerpt: string;
+  image: string;
+  date: string;
+  category: string;
+}
+
+const NewsStories: React.FC = () => {
+  const { language, t } = useLanguage();
+
+  const stories: Story[] = [
     {
       id: 1,
-      title: 'Al Noor Institute Achieves Top Score',
-      excerpt: 'Al Noor implemented IQS standards and became one of the top accredited institutions this week when they were able to make it in their final rounds and this is one of the biggest achievements to bring made by them.',
+      title: t('news.story1.title'),
+      excerpt: t('news.story1.excerpt'),
       image: 'https://images.pexels.com/photos/8613229/pexels-photo-8613229.jpeg?auto=compress&cs=tinysrgb&w=800',
       date: '2024-01-15',
-      category: 'Achievement'
+      category: t('news.category.achievement'),
     },
     {
       id: 2,
-      title: 'Training in Nairobi Completed',
-      excerpt: 'Al Noor implemented IQS standards and became one of the top accredited institutions.',
+      title: t('news.story2.title'),
+      excerpt: t('news.story2.excerpt'),
       image: 'https://images.pexels.com/photos/8613321/pexels-photo-8613321.jpeg?auto=compress&cs=tinysrgb&w=800',
       date: '2024-01-12',
-      category: 'Training'
+      category: t('news.category.training'),
     },
     {
       id: 3,
-      title: 'Training in Nairobi Completed',
-      excerpt: 'Al Noor implemented IQS standards and became one of the top accredited institutions.',
+      title: t('news.story3.title'),
+      excerpt: t('news.story3.excerpt'),
       image: 'https://images.pexels.com/photos/8613229/pexels-photo-8613229.jpeg?auto=compress&cs=tinysrgb&w=800',
       date: '2024-01-10',
-      category: 'Training'
-    }
+      category: t('news.category.training'),
+    },
   ];
 
   return (
-    <section id="news" className="py-16 bg-white">
+    <section id="news" className={`py-16 bg-white ${language === 'ar' ? 'rtl' : 'ltr'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            News & Success Stories
+            {t('news.title')}
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            View recent news and successfully stories from the schools who are accessing and using our 
-            platform and what did our accreditation help them in their school wellbeing
+            {t('news.subtitle')}
           </p>
         </div>
 
@@ -58,30 +69,30 @@ const NewsStories = () => {
                   </span>
                 </div>
               </div>
-              
+
               <div className="p-6">
                 <div className="flex items-center text-gray-500 text-sm mb-3">
                   <Calendar size={16} />
                   <span className="ml-2">
-                    {new Date(stories[0].date).toLocaleDateString('en-US', {
+                    {new Date(stories[0].date).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US', {
                       year: 'numeric',
                       month: 'long',
-                      day: 'numeric'
+                      day: 'numeric',
                     })}
                   </span>
                 </div>
-                
+
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">
                   {stories[0].title}
                 </h3>
-                
+
                 <p className="text-gray-600 mb-6 leading-relaxed">
                   {stories[0].excerpt}
                 </p>
-                
+
                 <button className="inline-flex items-center text-[#1B365D] hover:text-[#2563EB] font-medium transition-colors duration-200">
-                  Read more
-                  <ArrowRight size={16} className="ml-1" />
+                  {t('news.readMore')}
+                  <ArrowRight size={16} className={`${language === 'ar' ? 'mr-1' : 'ml-1'}`} />
                 </button>
               </div>
             </div>
@@ -107,29 +118,29 @@ const NewsStories = () => {
                       </span>
                     </div>
                   </div>
-                  
+
                   <div className="w-2/3 p-4">
                     <div className="flex items-center text-gray-500 text-sm mb-2">
                       <Calendar size={14} />
                       <span className="ml-1">
-                        {new Date(story.date).toLocaleDateString('en-US', {
+                        {new Date(story.date).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US', {
                           month: 'short',
-                          day: 'numeric'
+                          day: 'numeric',
                         })}
                       </span>
                     </div>
-                    
+
                     <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#1B365D] transition-colors duration-200">
                       {story.title}
                     </h3>
-                    
+
                     <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                       {story.excerpt}
                     </p>
-                    
+
                     <button className="inline-flex items-center text-[#1B365D] hover:text-[#2563EB] font-medium text-sm transition-colors duration-200">
-                      Read more
-                      <ArrowRight size={14} className="ml-1" />
+                      {t('news.readMore')}
+                      <ArrowRight size={14} className={`${language === 'ar' ? 'mr-1' : 'ml-1'}`} />
                     </button>
                   </div>
                 </div>

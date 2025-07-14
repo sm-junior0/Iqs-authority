@@ -1,40 +1,69 @@
-import { ArrowRight } from 'lucide-react';
-import standard from '../../assets/images/standardOverview.png'
-import standardoverviewresponsive from '../../assets/images/standardOverviewResponsive.png'
+"use client"
+
+import type React from "react"
+import { CheckCircle, Target, ClipboardCheck, ArrowRight } from "lucide-react"
+import { useLanguage } from "../../context/LanguageContext"
 
 const StandardsOverview: React.FC = () => {
+  const { language, t } = useLanguage()
+
+  const standards = [
+    {
+      icon: <CheckCircle size={24} />,
+      title: t("standards.what.title"),
+      description: t("standards.what.description"),
+      iconBg: "bg-[#10B981]",
+    },
+    {
+      icon: <Target size={24} />,
+      title: t("standards.why.title"),
+      description: t("standards.why.description"),
+      iconBg: "bg-[#2563EB]",
+    },
+    {
+      icon: <ClipboardCheck size={24} />,
+      title: t("standards.how.title"),
+      description: t("standards.how.description"),
+      iconBg: "bg-[#F97316]",
+    },
+  ]
 
   return (
-    <section id="standard" className="w-full bg-transparent py-8 md:py-20">
-      <div className="max-w-5xl mx-auto px-2 md:px-4 relative">
-        <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-3">
-          IQS Standards Overview
-        </h2>
-        <p className="text-gray-600 text-base md:text-lg mb-8 md:mb-10 max-w-3xl leading-relaxed">
-          Get a quick overview of what we base on and what are our standards for a certain school to be accredited
-        </p>
-        <div className="relative min-h-[180px] md:min-h-[240px] mb-10 md:mb-16 flex justify-start">
-          <img 
-            src={standardoverviewresponsive} 
-            alt="IQS Standard Overview Responsive" 
-            className="block md:hidden p-2 rounded-2xl shadow transition-transform duration-300 hover:scale-105 max-w-full h-auto" 
-          />
-          <img 
-            src={standard} 
-            alt="IQS Standard Overview" 
-            className="hidden md:block p-2 md:p-8 rounded-2xl shadow transition-transform duration-300 hover:scale-105 max-w-full h-auto" 
-          />  
+    <section className={`py-16 lg:py-24 bg-white ${language === "ar" ? "rtl" : "ltr"}`}>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{t("standards.title")}</h2>
+          <p className="text-base text-gray-600 leading-relaxed">{t("standards.subtitle")}</p>
         </div>
-        <a
-          href="/iqs-standard.pdf"
-          download
-          className="inline-flex items-center gap-2 bg-[#002855] hover:bg-[#001a3d] text-white font-medium rounded-full px-8 py-3 text-base shadow-lg transition-all duration-200"
-        >
-          Read the full IQS Standard Document <ArrowRight size={18} />
-        </a>
+
+        <div className="space-y-4 mb-12 w-full">
+          {standards.map((standard, index) => (
+            <div
+              key={index}
+              className="bg-gray-50 rounded-3xl p-6 flex items-center gap-6 hover:shadow-md transition-shadow duration-200 w-full"
+            >
+              <div className={`${standard.iconBg} p-4 rounded-full text-white flex-shrink-0`}>{standard.icon}</div>
+              <div className="flex-1 min-w-0 w-full">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 leading-tight">{standard.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{standard.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div>
+          <a
+            href="/iqs-standard.pdf"
+            download
+            className="inline-flex items-center gap-2 bg-[#002855] hover:bg-[#001a3d] text-white font-medium rounded-3xl px-8 py-4 text-sm shadow-lg transition-all duration-200 hover:shadow-xl"
+          >
+            <span>{t("standards.readDocument")}</span>
+            <ArrowRight size={16} />
+          </a>
+        </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default StandardsOverview;
+export default StandardsOverview

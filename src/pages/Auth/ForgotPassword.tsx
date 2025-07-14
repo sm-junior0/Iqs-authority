@@ -4,20 +4,19 @@ import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 
-interface LoginFormData {
+interface ForgotPasswordFormData {
   email: string;
-  password: string;
 }
 
-const Login: React.FC = () => {
-  const [formData, setFormData] = useState<LoginFormData>({
-    email: '',
-    password: ''
+const ForgotPassword: React.FC = () => {
+  const [formData, setFormData] = useState<ForgotPasswordFormData>({
+    email: ''
   });
-  const [errors, setErrors] = useState<Partial<LoginFormData>>({});
+  const [errors, setErrors] = useState<Partial<ForgotPasswordFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isEmailSent, setIsEmailSent] = useState<boolean>(false);
   
-  const { login } = useAuth();
+  const { forgotPassword } = useAuth();
   const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -28,7 +27,7 @@ const Login: React.FC = () => {
     }));
     
     // Clear error when user starts typing
-    if (errors[name as keyof LoginFormData]) {
+    if (errors[name as keyof ForgotPasswordFormData]) {
       setErrors(prev => ({
         ...prev,
         [name]: undefined
@@ -37,16 +36,12 @@ const Login: React.FC = () => {
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<LoginFormData> = {};
+    const newErrors: Partial<ForgotPasswordFormData> = {};
 
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email is invalid';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
     }
 
     setErrors(newErrors);
@@ -60,24 +55,50 @@ const Login: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      await login(formData.email, formData.password);
-      navigate('/dashboard');
-    } catch (error) {
-      setErrors({ email: 'Invalid email or password' });
+      await forgotPassword(formData.email);
+      setIsEmailSent(true);
+      // Navigate to verification page after a delay
+      setTimeout(() => {
+        navigate('/auth/verify-code', { state: { email: formData.email } });
+      }, 2000);
+    } catch  {
+      setErrors({ email: 'Failed to send reset email. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  if (isEmailSent) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Check your email
+            </h2>
+            <p className="text-gray-600">
+              We've sent a verification code to {formData.email}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8">
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Sign in to your account
+            Forgot Password
           </h2>
           <p className="text-gray-600">
-            Welcome back! Please enter your details.
+            Enter your email address to get verification code
           </p>
         </div>
 
@@ -93,62 +114,26 @@ const Login: React.FC = () => {
             required
           />
 
-          <Input
-            label="Password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            placeholder="Enter your password"
-            error={errors.password}
-            showPasswordToggle
-            required
-          />
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-[#1B365D] focus:ring-[#1B365D] border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                Remember me
-              </label>
-            </div>
-
-            <Link
-              to="/auth/forgot-password"
-              className="text-sm text-[#1B365D] hover:text-[#2563EB] transition-colors duration-200"
-            >
-              Forgot password?
-            </Link>
-          </div>
-
           <Button
             type="submit"
             className="w-full"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Signing in...' : 'Sign in'}
+            {isSubmitting ? 'Sending...' : 'Send Verification Link'}
           </Button>
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-gray-600">
-            Don't have an account?{' '}
-            <Link
-              to="/auth/register"
-              className="text-[#1B365D] hover:text-[#2563EB] font-medium transition-colors duration-200"
-            >
-              Sign up
-            </Link>
-          </p>
+          <Link
+            to="/auth/login"
+            className="text-[#1B365D] hover:text-[#2563EB] font-medium transition-colors duration-200"
+          >
+            Back to sign in
+          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default ForgotPassword;

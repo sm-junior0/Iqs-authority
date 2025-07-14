@@ -2,12 +2,21 @@ import React from 'react';
 import { FileText, School, MessageCircle } from 'lucide-react';
 import Button from '../ui/Button';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
 
-const QuickActions = () => {
+interface Action {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  buttonText: string;
+  onClick: () => void;
+}
+
+const QuickActions: React.FC = () => {
+  const { language, t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Helper to scroll to section after navigation
   const scrollToSection = (sectionId: string) => {
     if (location.pathname === '/') {
       const el = document.getElementById(sectionId);
@@ -25,48 +34,39 @@ const QuickActions = () => {
     }
   };
 
-  const actions = [
+  const actions: Action[] = [
     {
       icon: <FileText size={48} />,
-      title: 'Apply For Accreditation',
-      description: 'Start now and enable your school to access our programs.',
-      buttonText: 'Apply Now',
-      buttonVariant: 'primary',
+      title: t('quickActions.apply.title'),
+      description: t('quickActions.apply.description'),
+      buttonText: t('quickActions.apply.button'),
       onClick: () => navigate('/auth/register'),
-      link: undefined,
-      as: 'button'
     },
     {
       icon: <School size={48} />,
-      title: 'View Certified Schools',
-      description: 'See the List of all schools that we are working together on our system.',
-      buttonText: 'View Schools',
-      buttonVariant: 'primary',
+      title: t('quickActions.schools.title'),
+      description: t('quickActions.schools.description'),
+      buttonText: t('quickActions.schools.button'),
       onClick: () => scrollToSection('schools'),
-      link: undefined,
-      as: 'button'
     },
     {
       icon: <MessageCircle size={48} />,
-      title: 'Contact Us',
-      description: 'Get in contact with us and our team behind this system.',
-      buttonText: 'Contact Us',
-      buttonVariant: 'primary',
+      title: t('quickActions.contact.title'),
+      description: t('quickActions.contact.description'),
+      buttonText: t('quickActions.contact.button'),
       onClick: () => scrollToSection('contact'),
-      link: undefined,
-      as: 'button'
-    }
+    },
   ];
 
   return (
-    <section id="media" className="py-16 bg-gray-50">
+    <section id="media" className={`py-16 bg-gray-50 ${language === 'ar' ? 'rtl' : 'ltr'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Quick Actions
+            {t('quickActions.title')}
           </h2>
           <p className="text-xl text-gray-600">
-            View quick actions on how our system works and get to know how we work day by day
+            {t('quickActions.subtitle')}
           </p>
         </div>
 
@@ -85,15 +85,9 @@ const QuickActions = () => {
               <p className="text-gray-600 mb-6 leading-relaxed">
                 {action.description}
               </p>
-              {action.buttonText === 'Apply Now' || action.buttonText === 'View Schools' || action.buttonText === 'Contact Us' ? (
-                <Button variant={action.buttonVariant} className="w-full" onClick={action.onClick}>
-                  {action.buttonText}
-                </Button>
-              ) : (
-                <Button variant={action.buttonVariant} className="w-full" onClick={() => {}}>
-                  {action.buttonText}
-                </Button>
-              )}
+              <Button variant="primary" className="w-full" onClick={action.onClick}>
+                {action.buttonText}
+              </Button>
             </div>
           ))}
         </div>

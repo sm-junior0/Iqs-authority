@@ -1,116 +1,277 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import Input from '../../components/ui/Input';
+import Select from '../../components/ui/Select';
+import Button from '../../components/ui/Button';
+
+interface RegisterFormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  fullName: string;
+  phoneNumber: string;
+  accountType: 'admin' | 'evaluator' | 'institution' | 'trainer' | '';
+}
 
 const Register: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' });
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [formData, setFormData] = useState<RegisterFormData>({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    fullName: '',
+    phoneNumber: '',
+    accountType: ''
+  });
+  const [errors, setErrors] = useState<Partial<RegisterFormData>>({});
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const accountTypeOptions = [
+    { value: 'institution', label: 'Educational Institution' },
+    { value: 'evaluator', label: 'Evaluator' },
+    { value: 'trainer', label: 'Trainer' },
+    { value: 'admin', label: 'Administrator' }
+  ];
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (errors[name as keyof RegisterFormData]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateStep1 = (): boolean => {
+    const newErrors: Partial<RegisterFormData> = {};
+
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateStep2 = (): boolean => {
+    const newErrors: Partial<RegisterFormData> = {};
+
+    if (!formData.fullName) {
+      newErrors.fullName = 'Full name is required';
+    }
+
+    if (!formData.phoneNumber) {
+      newErrors.phoneNumber = 'Phone number is required';
+    }
+
+    if (!formData.accountType) {
+      newErrors.accountType = 'Account type is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = (): void => {
+    if (validateStep1()) {
+      setCurrentStep(2);
+    }
+  };
+
+  const handleBack = (): void => {
+    setCurrentStep(1);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    // Handle register logic here
+    
+    if (!validateStep2()) return;
+
+    setIsSubmitting(true);
+    try {
+      await register({
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName,
+        phoneNumber: formData.phoneNumber,
+        accountType: formData.accountType as 'admin' | 'evaluator' | 'institution' | 'trainer'
+      });
+      navigate('/dashboard');
+    } catch (error) {
+      setErrors({ email: 'Registration failed. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f4f6fa]">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-lg shadow-md p-8 w-full max-w-md flex flex-col gap-6"
-      >
-        <h2 className="text-center text-xl font-semibold mb-2 text-gray-900">Create your account</h2>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="name" className="text-sm font-medium text-gray-700">Full Name</label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            autoComplete="name"
-            required
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Enter your name"
-            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#002855]"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="email" className="text-sm font-medium text-gray-700">Email address</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Enter your email"
-            className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#002855]"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="password" className="text-sm font-medium text-gray-700">Password</label>
-          <div className="relative">
-            <input
-              id="password"
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              required
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Choose your password"
-              className="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#002855] pr-10"
-            />
-            <button
-              type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
-              onClick={() => setShowPassword((v) => !v)}
-              tabIndex={-1}
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="confirm" className="text-sm font-medium text-gray-700">Confirm Password</label>
-          <div className="relative">
-            <input
-              id="confirm"
-              name="confirm"
-              type={showConfirm ? 'text' : 'password'}
-              autoComplete="new-password"
-              required
-              value={form.confirm}
-              onChange={handleChange}
-              placeholder="Confirm your password"
-              className="border border-gray-300 rounded-md px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-[#002855] pr-10"
-            />
-            <button
-              type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
-              onClick={() => setShowConfirm((v) => !v)}
-              tabIndex={-1}
-            >
-              {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-[#002855] text-white font-semibold rounded-md py-2 mt-2 hover:bg-[#001a3d] transition-colors duration-200"
-        >
-          Register
-        </button>
-        <Link to="/" className="block text-center text-xs text-gray-500 hover:text-[#002855] mt-4 underline">
-          Back to Home
-        </Link>
-      </form>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8">
+        {currentStep === 1 ? (
+          <>
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Register new Account
+              </h2>
+            </div>
+
+            <form className="space-y-6">
+              <Input
+                label="Email address"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Enter your email"
+                error={errors.email}
+                required
+              />
+
+              <Input
+                label="Password"
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="Choose your password"
+                error={errors.password}
+                showPasswordToggle
+                required
+              />
+
+              <Input
+                label="Confirm Password"
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                placeholder="Please confirm your password"
+                error={errors.confirmPassword}
+                showPasswordToggle
+                required
+              />
+
+              <Button
+                type="button"
+                onClick={handleNext}
+                className="w-full"
+              >
+                Next
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-gray-600">
+                Already have an account?{' '}
+                <Link
+                  to="/auth/login"
+                  className="text-[#1B365D] hover:text-[#2563EB] font-medium transition-colors duration-200"
+                >
+                  Sign in
+                </Link>
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center mb-8">
+              <button
+                onClick={handleBack}
+                className="flex items-center text-[#1B365D] hover:text-[#2563EB] transition-colors duration-200"
+              >
+                <ArrowLeft size={20} className="mr-2" />
+                Back
+              </button>
+              <h2 className="text-2xl font-bold text-gray-900 ml-auto mr-auto">
+                Register new Account
+              </h2>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <Input
+                label="Full Names"
+                type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleInputChange}
+                placeholder="Enter your names"
+                error={errors.fullName}
+                required
+              />
+
+              <Input
+                label="Phone Number"
+                type="tel"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleInputChange}
+                placeholder="Enter phone number"
+                error={errors.phoneNumber}
+                required
+              />
+
+              <Select
+                label="Account Type"
+                name="accountType"
+                value={formData.accountType}
+                onChange={handleInputChange}
+                options={accountTypeOptions}
+                placeholder="Select your Role"
+                error={errors.accountType}
+                required
+              />
+
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Creating Account...' : 'Submit'}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-gray-600">
+                Already have an account?{' '}
+                <Link
+                  to="/auth/login"
+                  className="text-[#1B365D] hover:text-[#2563EB] font-medium transition-colors duration-200"
+                >
+                  Sign in
+                </Link>
+              </p>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };
 
-export default Register; 
+export default Register;
