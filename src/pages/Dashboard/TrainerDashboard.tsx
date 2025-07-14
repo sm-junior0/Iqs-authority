@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  LayoutDashboard, 
-  GraduationCap, 
-  Users, 
-  FileText, 
-  Bell, 
+import {
+  LayoutDashboard,
+  GraduationCap,
+  Users,
+  FileText,
+  Bell,
   Settings,
   Search,
   TrendingUp,
-  // Plus,
   X,
-  ChevronDown
+  ChevronDown,
+  Menu,
 } from 'lucide-react';
 // import { useAuth } from '../../context/AuthContext';
 
@@ -56,11 +56,12 @@ const TrainerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [showCreateSessionModal, setShowCreateSessionModal] = useState<boolean>(false);
   const [showAddAttendanceModal, setShowAddAttendanceModal] = useState<boolean>(false);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   const stats: StatCard[] = [
     { title: 'Total Trainings', value: '5', change: '15%', icon: '$' },
     { title: 'Total Reports', value: '1000000', change: '15%', icon: '$' },
-    { title: 'Total Participants', value: '1000000', change: '15%', icon: '$' }
+    { title: 'Total Participants', value: '1000000', change: '15%', icon: '$' },
   ];
 
   const trainingSessions: TrainingSession[] = Array(8).fill(null).map((_, i) => ({
@@ -68,14 +69,14 @@ const TrainerDashboard: React.FC = () => {
     sessionName: 'Nairobi Trainings',
     location: 'Nairobi Kenya',
     joiningDate: '10/5/2025',
-    duration: '2 Months'
+    duration: '2 Months',
   }));
 
   const reports: Report[] = Array(5).fill(null).map((_, i) => ({
     id: `report-${i}`,
     reportName: 'Kingston School Report',
     schoolLocation: 'Nairobi Kenya',
-    uploadDate: '10/5/2025'
+    uploadDate: '10/5/2025',
   }));
 
   const attendanceRecords: AttendanceRecord[] = Array(7).fill(null).map((_, i) => ({
@@ -84,13 +85,13 @@ const TrainerDashboard: React.FC = () => {
     location: 'Nairobi Kenya',
     joiningDate: '10/5/2025',
     attendanceDate: '10/5/2025',
-    duration: '2 Months'
+    duration: '2 Months',
   }));
 
   const notifications: Notification[] = Array(9).fill(null).map((_, i) => ({
     id: `notification-${i}`,
     message: 'You have updated the kingston highschool report',
-    timestamp: '30 min ago'
+    timestamp: '30 min ago',
   }));
 
   const handleUpdate = (id: string): void => {
@@ -115,45 +116,55 @@ const TrainerDashboard: React.FC = () => {
     { id: 'attendance', label: 'Attendance', icon: Users },
     { id: 'reports', label: 'Reports', icon: FileText },
     { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
+  // Mobile Card Component
+  const MobileCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+    <div className={`bg-white p-4 rounded-lg shadow-sm border space-y-3 ${className}`}>{children}</div>
+  );
+
   const renderDashboard = () => (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-      
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard</h1>
+        <button
+          className="lg:hidden p-2 rounded-lg bg-[#1B365D] text-white"
+          onClick={() => setSidebarOpen(true)}
+          title="Open sidebar"
+        >
+          <Menu size={20} />
+        </button>
+      </div>
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
         {stats.map((stat, index) => (
-          <div key={index} className="bg-white rounded-lg p-6 shadow-sm border">
+          <div key={index} className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">{stat.title}</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900">{stat.value}</p>
                 <div className="flex items-center mt-2">
-                  <TrendingUp size={16} className="text-green-500 mr-1" />
-                  <span className="text-sm text-green-500">{stat.change}</span>
+                  <TrendingUp size={14} className="text-green-500 mr-1" />
+                  <span className="text-xs sm:text-sm text-green-500">{stat.change}</span>
                 </div>
               </div>
-              <div className="bg-[#1B365D] text-white p-3 rounded-lg">
-                <span className="text-lg font-bold">{stat.icon}</span>
+              <div className="bg-[#1B365D] text-white p-2 sm:p-3 rounded-lg">
+                <span className="text-sm sm:text-lg font-bold">{stat.icon}</span>
               </div>
             </div>
           </div>
         ))}
       </div>
-
       {/* Training Sessions */}
       <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h2 className="text-lg font-semibold text-gray-900">Training Sessions</h2>
-            <button className="bg-[#1B365D] text-white px-4 py-2 rounded-lg text-sm font-medium">
-              See All
-            </button>
+            <button className="bg-[#1B365D] text-white px-4 py-2 rounded-lg text-sm font-medium w-full sm:w-auto">See All</button>
           </div>
-          <div className="mt-4 flex items-center space-x-4">
-            <div className="relative flex-1 max-w-md">
+          <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <div className="relative flex-1">
               <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
@@ -161,12 +172,13 @@ const TrainerDashboard: React.FC = () => {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent"
               />
             </div>
-            <select title='recent' className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1B365D] focus:border-transparent">
+            <select title="recent" className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1B365D] focus:border-transparent">
               <option>Latest</option>
             </select>
           </div>
         </div>
-        <div className="overflow-x-auto">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
@@ -188,19 +200,39 @@ const TrainerDashboard: React.FC = () => {
             </tbody>
           </table>
         </div>
+        {/* Mobile Cards */}
+        <div className="md:hidden p-4 space-y-4">
+          {trainingSessions.slice(0, 3).map((session) => (
+            <MobileCard key={session.id}>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-medium text-gray-900">{session.sessionName}</h3>
+                  <p className="text-sm text-gray-500">{session.location}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-500">Joining Date:</span>
+                  <p className="font-medium">{session.joiningDate}</p>
+                </div>
+                <div>
+                  <span className="text-gray-500">Duration:</span>
+                  <p className="font-medium">{session.duration}</p>
+                </div>
+              </div>
+            </MobileCard>
+          ))}
+        </div>
       </div>
-
       {/* Recent Reports */}
       <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h2 className="text-lg font-semibold text-gray-900">Recent Reports</h2>
-            <button className="bg-[#1B365D] text-white px-4 py-2 rounded-lg text-sm font-medium">
-              See All
-            </button>
+            <button className="bg-[#1B365D] text-white px-4 py-2 rounded-lg text-sm font-medium w-full sm:w-auto">See All</button>
           </div>
-          <div className="mt-4 flex items-center space-x-4">
-            <div className="relative flex-1 max-w-md">
+          <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <div className="relative flex-1">
               <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
@@ -208,12 +240,13 @@ const TrainerDashboard: React.FC = () => {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent"
               />
             </div>
-            <select title='recent' className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1B365D] focus:border-transparent">
+            <select title="recent" className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1B365D] focus:border-transparent">
               <option>Latest</option>
             </select>
           </div>
         </div>
-        <div className="overflow-x-auto">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
@@ -254,21 +287,59 @@ const TrainerDashboard: React.FC = () => {
             </tbody>
           </table>
         </div>
+        {/* Mobile Cards */}
+        <div className="md:hidden p-4 space-y-4">
+          {reports.slice(0, 4).map((report) => (
+            <MobileCard key={report.id}>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-medium text-gray-900">{report.reportName}</h3>
+                  <p className="text-sm text-gray-500">{report.schoolLocation}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-500">Upload Date:</span>
+                  <p className="font-medium">{report.uploadDate}</p>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <button
+                  onClick={() => handleDownload(report.id)}
+                  className="bg-[#1B365D] text-white px-3 py-2 rounded text-sm hover:bg-[#2563EB] transition-colors"
+                >
+                  Download
+                </button>
+                <button
+                  onClick={() => handleView(report.id)}
+                  className="bg-blue-600 text-white px-3 py-2 rounded text-sm hover:bg-blue-700 transition-colors"
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => handleDelete(report.id)}
+                  className="bg-red-600 text-white px-3 py-2 rounded text-sm hover:bg-red-700 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </MobileCard>
+          ))}
+        </div>
       </div>
-
       {/* Attendance Report Summary Chart */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
+      <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-6">Attendance Report Summary</h2>
-        <div className="relative h-64">
+        <div className="relative h-48 sm:h-64">
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-lg shadow-md border">
-            <div className="text-2xl font-bold text-gray-900">220,342,123</div>
-            <div className="text-sm text-gray-500">May</div>
+            <div className="text-lg sm:text-2xl font-bold text-gray-900">220,342,123</div>
+            <div className="text-xs sm:text-sm text-gray-500">May</div>
           </div>
           <svg className="w-full h-full" viewBox="0 0 800 200">
             <defs>
               <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#1B365D" stopOpacity="0.3"/>
-                <stop offset="100%" stopColor="#1B365D" stopOpacity="0.1"/>
+                <stop offset="0%" stopColor="#1B365D" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#1B365D" stopOpacity="0.1" />
               </linearGradient>
             </defs>
             <path
@@ -281,10 +352,10 @@ const TrainerDashboard: React.FC = () => {
               d="M 50 150 Q 150 120 200 130 T 350 100 T 500 80 T 650 90 T 750 120 L 750 200 L 50 200 Z"
               fill="url(#gradient)"
             />
-            <circle cx="500" cy="80" r="6" fill="#1B365D" stroke="white" strokeWidth="2"/>
-            <line x1="500" y1="80" x2="500" y2="40" stroke="#1B365D" strokeWidth="2" strokeDasharray="5,5"/>
+            <circle cx="500" cy="80" r="6" fill="#1B365D" stroke="white" strokeWidth="2" />
+            <line x1="500" y1="80" x2="500" y2="40" stroke="#1B365D" strokeWidth="2" strokeDasharray="5,5" />
           </svg>
-          <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-500 px-12">
+          <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-500 px-4 sm:px-12">
             <span>Jan</span>
             <span>Feb</span>
             <span>Mar</span>
@@ -298,7 +369,7 @@ const TrainerDashboard: React.FC = () => {
             <span>Nov</span>
             <span>Dec</span>
           </div>
-          <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-gray-500 py-4">
+          <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-gray-500 py-2 sm:py-4">
             <span>260</span>
             <span>220</span>
             <span>180</span>
@@ -306,13 +377,12 @@ const TrainerDashboard: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* Recent Notifications */}
       <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
+        <div className="p-4 sm:p-6 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h2 className="text-lg font-semibold text-gray-900">Recent Notification</h2>
-            <select title='recent' className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1B365D] focus:border-transparent">
+            <select title="recent" className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1B365D] focus:border-transparent w-full sm:w-auto">
               <option>Today</option>
             </select>
           </div>
@@ -327,7 +397,7 @@ const TrainerDashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-4">
           {notifications.slice(0, 2).map((notification) => (
             <div key={notification.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
               <p className="text-sm text-gray-900">{notification.message}</p>
@@ -963,44 +1033,37 @@ const TrainerDashboard: React.FC = () => {
     </div>
   );
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'dashboard':
-        return renderDashboard();
-      case 'training':
-        return renderTraining();
-      case 'attendance':
-        return renderAttendance();
-      case 'reports':
-        return renderReports();
-      case 'notifications':
-        return renderNotifications();
-      case 'settings':
-        return renderSettings();
-      default:
-        return renderDashboard();
-    }
-  };
-
+  // Responsive sidebar and main layout
   return (
     <div className="min-h-screen bg-gray-100 flex">
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
       {/* Sidebar */}
-      <div className="w-64 bg-[#1B365D] text-white flex flex-col">
-        <div className="p-6">
+      <div
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#1B365D] text-white flex flex-col transform transition-transform duration-300 ease-in-out lg:transform-none ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
+        <div className="p-6 flex items-center justify-between">
           <h1 className="text-xl font-bold">Iqs Authority</h1>
+          <button className="lg:hidden p-1 rounded text-white hover:bg-blue-700" onClick={() => setSidebarOpen(false)} title="Close sidebar">
+            <X size={20} />
+          </button>
         </div>
-        
         <nav className="flex-1 px-4 space-y-2">
           {sidebarItems.map((item) => {
             const Icon = item.icon;
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setSidebarOpen(false);
+                }}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
-                  activeTab === item.id
-                    ? 'bg-white text-[#1B365D]'
-                    : 'text-white hover:bg-blue-700'
+                  activeTab === item.id ? 'bg-white text-[#1B365D]' : 'text-white hover:bg-blue-700'
                 }`}
               >
                 <Icon size={20} />
@@ -1010,23 +1073,47 @@ const TrainerDashboard: React.FC = () => {
           })}
         </nav>
       </div>
-
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
-        <div className="p-6">
-          {renderContent()}
+        {/* Mobile Header */}
+        <div className="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+          <button onClick={() => setSidebarOpen(true)} className="text-gray-600 hover:text-gray-900" title="Open sidebar">
+            <Menu size={24} />
+          </button>
+          <h1 className="text-lg font-semibold text-gray-900">Iqs Authority</h1>
+          <div className="w-6" />
+        </div>
+        <div className="p-4 sm:p-6">
+          {(() => {
+            switch (activeTab) {
+              case 'dashboard':
+                return renderDashboard();
+              case 'training':
+                return renderTraining();
+              case 'attendance':
+                return renderAttendance();
+              case 'reports':
+                return renderReports();
+              case 'notifications':
+                return renderNotifications();
+              case 'settings':
+                return renderSettings();
+              default:
+                return renderDashboard();
+            }
+          })()}
         </div>
       </div>
-
-      {/* Create Session Modal */}
+      {/* Modals (unchanged, but add responsive classes if needed) */}
       {showCreateSessionModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Create New Session</h3>
               <button
                 onClick={() => setShowCreateSessionModal(false)}
                 className="text-gray-400 hover:text-gray-600"
+                title="Close modal"
               >
                 <X size={20} />
               </button>
@@ -1056,7 +1143,7 @@ const TrainerDashboard: React.FC = () => {
                   placeholder="Enter duration"
                 />
               </div>
-              <div className="flex space-x-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <button
                   onClick={() => setShowCreateSessionModal(false)}
                   className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors"
@@ -1074,16 +1161,15 @@ const TrainerDashboard: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Add Attendance Modal */}
       {showAddAttendanceModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Add New Attendance</h3>
               <button
                 onClick={() => setShowAddAttendanceModal(false)}
                 className="text-gray-400 hover:text-gray-600"
+                title="Close modal"
               >
                 <X size={20} />
               </button>
@@ -1107,13 +1193,13 @@ const TrainerDashboard: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Attendance Date</label>
-                <input 
-                 title='date'
+                <input
+                  title="date"
                   type="date"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent"
                 />
               </div>
-              <div className="flex space-x-3 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <button
                   onClick={() => setShowAddAttendanceModal(false)}
                   className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors"

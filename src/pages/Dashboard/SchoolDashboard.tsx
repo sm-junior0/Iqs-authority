@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { LayoutDashboard, Bell, Settings, Search, ChevronDown, X, FileIcon, Upload } from "lucide-react"
+import { LayoutDashboard, Bell, Settings, Search, ChevronDown, X, FileIcon, Upload, Menu } from 'lucide-react'
 
 interface Application {
   id: string
@@ -30,6 +30,7 @@ const SchoolDashboard: React.FC = () => {
   const [showAccreditationInfoModal, setShowAccreditationInfoModal] = useState<boolean>(false)
   const [applicationStep, setApplicationStep] = useState<number>(1)
   const [totalApplications, setTotalApplications] = useState<number>(1)
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false)
 
   const applications: Application[] = [
     {
@@ -100,32 +101,34 @@ const SchoolDashboard: React.FC = () => {
 
   const renderDashboard = () => (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+      <h1 className="text-xl md:text-2xl font-bold text-gray-900">Dashboard</h1>
 
       {/* Total Applications Stats */}
-      <div className="bg-white rounded-lg p-6 shadow-sm border max-w-sm">
+      <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm border max-w-sm">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-600">Total Applications</p>
-            <p className="text-2xl font-bold text-gray-900">{totalApplications}</p>
+            <p className="text-xl md:text-2xl font-bold text-gray-900">{totalApplications}</p>
           </div>
         </div>
       </div>
 
       {/* Recent Applications */}
       <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
+        <div className="p-4 md:p-6 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h2 className="text-lg font-semibold text-gray-900">Recent Application</h2>
             <button
               onClick={handleApplyForAccreditation}
-              className="bg-[#1B365D] text-white px-4 py-2 rounded-lg text-sm font-medium"
+              className="bg-[#1B365D] text-white px-4 py-2 rounded-lg text-sm font-medium w-full sm:w-auto"
             >
               Apply for Accreditation
             </button>
           </div>
         </div>
-        <div className="overflow-x-auto">
+        
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
@@ -192,15 +195,64 @@ const SchoolDashboard: React.FC = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile Cards */}
+        <div className="md:hidden p-4 space-y-4">
+          {totalApplications === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No Application So far</p>
+            </div>
+          ) : (
+            applications.slice(0, totalApplications).map((application) => (
+              <div key={application.id} className="bg-gray-50 rounded-lg p-4 space-y-3">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-medium text-gray-900">{application.applicationId}</h3>
+                    <p className="text-sm text-gray-500">Date: {application.applicationDate}</p>
+                  </div>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      application.applicationStatus === "Approved"
+                        ? "bg-green-100 text-green-800"
+                        : application.applicationStatus === "Pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {application.applicationStatus}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={handleViewApplication}
+                    className="bg-[#1B365D] text-white px-3 py-1 rounded text-sm hover:bg-[#2563EB] transition-colors"
+                  >
+                    View
+                  </button>
+                  {application.applicationStatus === "Pending" && (
+                    <button className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition-colors">
+                      Delete
+                    </button>
+                  )}
+                  {application.applicationStatus === "Approved" && (
+                    <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors">
+                      Download Certificate
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       {/* Recent Notifications */}
       <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-4 md:p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900">Recent Notification</h2>
           </div>
-          <div className="mt-4 flex items-center space-x-4">
+          <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <div className="relative flex-1 max-w-md">
               <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -214,11 +266,11 @@ const SchoolDashboard: React.FC = () => {
             </select>
           </div>
         </div>
-        <div className="p-6 space-y-4">
+        <div className="p-4 md:p-6 space-y-4">
           {notifications.slice(0, 2).map((notification) => (
             <div
               key={notification.id}
-              className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
+              className="flex flex-col sm:flex-row sm:items-center justify-between py-2 border-b border-gray-100 last:border-b-0 space-y-1 sm:space-y-0"
             >
               <p className="text-sm text-gray-900">{notification.message}</p>
               <span className="text-sm text-gray-500">{notification.timestamp}</span>
@@ -229,11 +281,11 @@ const SchoolDashboard: React.FC = () => {
 
       {/* Recent Feedback */}
       <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-4 md:p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-gray-900">Recent Feedback</h2>
           </div>
-          <div className="mt-4 flex items-center space-x-4">
+          <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <div className="relative flex-1 max-w-md">
               <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -247,7 +299,7 @@ const SchoolDashboard: React.FC = () => {
             </select>
           </div>
         </div>
-        <div className="p-6 space-y-4">
+        <div className="p-4 md:p-6 space-y-4">
           {totalApplications === 0 || feedback.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500">No FeedBack Found</p>
@@ -256,10 +308,10 @@ const SchoolDashboard: React.FC = () => {
             feedback.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
+                className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-gray-100 last:border-b-0 space-y-2 sm:space-y-0"
               >
                 <p className="text-sm text-gray-900">{item.message}</p>
-                <div className="text-right">
+                <div className="text-left sm:text-right">
                   <p className="text-sm font-medium text-gray-900">{item.author}</p>
                   <span className="text-sm text-gray-500">{item.timestamp}</span>
                 </div>
@@ -273,12 +325,12 @@ const SchoolDashboard: React.FC = () => {
 
   const renderNotifications = () => (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
+      <h1 className="text-xl md:text-2xl font-bold text-gray-900">Notifications</h1>
 
       <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-4 md:p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">Recent Notification</h2>
-          <div className="mt-4 flex items-center space-x-4">
+          <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <div className="relative flex-1 max-w-md">
               <Search size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -292,11 +344,11 @@ const SchoolDashboard: React.FC = () => {
             </select>
           </div>
         </div>
-        <div className="p-6 space-y-4">
+        <div className="p-4 md:p-6 space-y-4">
           {notifications.map((notification) => (
             <div
               key={notification.id}
-              className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
+              className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-gray-100 last:border-b-0 space-y-1 sm:space-y-0"
             >
               <p className="text-sm text-gray-900">{notification.message}</p>
               <span className="text-sm text-gray-500">{notification.timestamp}</span>
@@ -309,10 +361,10 @@ const SchoolDashboard: React.FC = () => {
 
   const renderSettings = () => (
     <div className="space-y-8">
-      <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+      <h1 className="text-xl md:text-2xl font-bold text-gray-900">Settings</h1>
 
       {/* Personal Settings */}
-      <div className="bg-white rounded-lg shadow-sm border p-8">
+      <div className="bg-white rounded-lg shadow-sm border p-4 md:p-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-8">Personal Settings</h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -367,7 +419,7 @@ const SchoolDashboard: React.FC = () => {
       </div>
 
       {/* Notifications */}
-      <div className="bg-white rounded-lg shadow-sm border p-8">
+      <div className="bg-white rounded-lg shadow-sm border p-4 md:p-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-8">Notifications</h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -408,7 +460,7 @@ const SchoolDashboard: React.FC = () => {
       </div>
 
       {/* Data Backup */}
-      <div className="bg-white rounded-lg shadow-sm border p-8">
+      <div className="bg-white rounded-lg shadow-sm border p-4 md:p-8">
         <h2 className="text-xl font-semibold text-gray-900 mb-8">Data Backup</h2>
 
         <div>
@@ -444,10 +496,24 @@ const SchoolDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="w-64 bg-[#1B365D] text-white flex flex-col">
-        <div className="p-6">
+      <div className={`fixed md:static inset-y-0 left-0 z-50 w-64 bg-[#1B365D] text-white flex flex-col transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+        <div className="p-6 flex items-center justify-between">
           <h1 className="text-xl font-bold">Iqs Authority</h1>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden text-white hover:text-gray-300"
+          >
+            <X size={24} />
+          </button>
         </div>
 
         <nav className="flex-1 px-4 space-y-2">
@@ -456,7 +522,10 @@ const SchoolDashboard: React.FC = () => {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => {
+                  setActiveTab(item.id)
+                  setSidebarOpen(false)
+                }}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${
                   activeTab === item.id ? "bg-white text-[#1B365D]" : "text-white hover:bg-blue-700"
                 }`}
@@ -470,27 +539,42 @@ const SchoolDashboard: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        <div className="p-6">{renderContent()}</div>
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile Header */}
+        <div className="md:hidden bg-white shadow-sm border-b px-4 py-3 flex items-center justify-between">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <Menu size={24} />
+          </button>
+          <h1 className="text-lg font-semibold text-gray-900">Iqs Authority</h1>
+          <div className="w-6" /> {/* Spacer for centering */}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-auto">
+          <div className="p-4 md:p-6">{renderContent()}</div>
+        </div>
       </div>
 
       {/* Application For Accreditation Modal */}
       {showApplicationModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4">
-            <div className="p-6 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-4 md:p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">Application For Accreditation</h2>
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900">Application For Accreditation</h2>
                 <button onClick={() => setShowApplicationModal(false)} className="text-gray-400 hover:text-gray-600">
                   <X size={24} />
                 </button>
               </div>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-4 md:p-6 space-y-6">
               {applicationStep === 1 && (
                 <>
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">School Name</label>
                       <input
@@ -523,7 +607,7 @@ const SchoolDashboard: React.FC = () => {
                   <div className="flex justify-start">
                     <button
                       onClick={handleNextStep}
-                      className="bg-[#1B365D] text-white px-6 py-2 rounded-lg hover:bg-[#2563EB] transition-colors"
+                      className="bg-[#1B365D] text-white px-6 py-2 rounded-lg hover:bg-[#2563EB] transition-colors w-full md:w-auto"
                     >
                       Next
                     </button>
@@ -551,16 +635,16 @@ const SchoolDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0 sm:space-x-4">
                     <button
                       onClick={handleBackStep}
-                      className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                      className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors w-full sm:w-auto"
                     >
                       Back
                     </button>
                     <button
                       onClick={handleSubmitApplication}
-                      className="bg-[#1B365D] text-white px-6 py-2 rounded-lg hover:bg-[#2563EB] transition-colors"
+                      className="bg-[#1B365D] text-white px-6 py-2 rounded-lg hover:bg-[#2563EB] transition-colors w-full sm:w-auto"
                     >
                       Submit
                     </button>
@@ -574,11 +658,11 @@ const SchoolDashboard: React.FC = () => {
 
       {/* School Accredition Information Modal */}
       {showAccreditationInfoModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-4 md:p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">School Accredition Information</h2>
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900">School Accredition Information</h2>
                 <button
                   onClick={() => setShowAccreditationInfoModal(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -588,8 +672,8 @@ const SchoolDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-6">
+            <div className="p-4 md:p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">School Name</label>
                   <p className="text-gray-900">Kingston High School</p>
@@ -602,7 +686,7 @@ const SchoolDashboard: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">School Registration Documents</label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col items-center p-4 border border-gray-200 rounded-lg">
                     <FileIcon size={48} className="text-gray-400 mb-2" />
                     <p className="text-sm text-gray-700 text-center">Kingston High School report.pdf</p>
@@ -616,7 +700,7 @@ const SchoolDashboard: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">School Cirriculum Documents</label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col items-center p-4 border border-gray-200 rounded-lg">
                     <FileIcon size={48} className="text-gray-400 mb-2" />
                     <p className="text-sm text-gray-700 text-center">Kingston High School report.pdf</p>
@@ -629,7 +713,7 @@ const SchoolDashboard: React.FC = () => {
               </div>
 
               <div className="flex justify-start">
-                <button className="bg-[#1B365D] text-white px-6 py-2 rounded-lg hover:bg-[#2563EB] transition-colors">
+                <button className="bg-[#1B365D] text-white px-6 py-2 rounded-lg hover:bg-[#2563EB] transition-colors w-full md:w-auto">
                   Download Information
                 </button>
               </div>
